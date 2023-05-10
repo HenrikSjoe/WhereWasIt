@@ -11,7 +11,7 @@
 
 ## Technologies Used
 
-- Google Maps SDK for iOS
+- MapKit
 - Firebase (Firestore, Authentication)
 - SwiftUI
 - Xcode
