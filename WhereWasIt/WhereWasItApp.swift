@@ -5,16 +5,25 @@
 //  Created by Henrik Sjögren on 2023-04-18.
 //
 
+
+
 import SwiftUI
+import Firebase
 
 @main
 struct WhereWasItApp: App {
-    let persistenceController = PersistenceController.shared
+    @StateObject private var locationStore = LocationStore()
+
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(locationStore)
         }
     }
 }
+
+
