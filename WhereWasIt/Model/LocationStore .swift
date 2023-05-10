@@ -47,6 +47,8 @@ class LocationStore: ObservableObject {
             print("Error adding location: \(error)")
         }
     }
+    
+    
 
     func deleteLocation(location: Location) {
         db.collection(locationCollection).document(location.id).delete { error in

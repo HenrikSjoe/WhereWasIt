@@ -5,9 +5,6 @@
 //  Created by Henrik Sjögren on 2023-05-09.
 //
 
-import SwiftUI
-import MapKit
-import CoreLocation
 
 import SwiftUI
 import MapKit
@@ -20,11 +17,23 @@ struct MapView: UIViewRepresentable {
     @State private var userLocation: CLLocation?
     @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
 
-    func makeUIView(context: Context) -> MKMapView {
+   /* func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
         mapView.delegate = context.coordinator
         return mapView
+    }*/
+    
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView(frame: .zero)
+        mapView.delegate = context.coordinator
+        
+        // Add long press gesture recognizer
+        let longPressRecognizer = UILongPressGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleLongPress))
+        mapView.addGestureRecognizer(longPressRecognizer)
+        
+        return mapView
     }
+
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
         if centerOnUser, let userLocation = userLocation {
@@ -35,8 +44,9 @@ struct MapView: UIViewRepresentable {
 
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
+            Coordinator(self, locationStore: locationStore)
+        }
+    
     final class LocationAnnotation: NSObject, MKAnnotation {
         let title: String?
         let subtitle: String?
@@ -58,15 +68,17 @@ struct MapView: UIViewRepresentable {
 
     class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
             var parent: MapView
+            var locationStore: LocationStore
             let locationManager = CLLocationManager()
 
-            init(_ parent: MapView) {
-                self.parent = parent
-                super.init()
-                locationManager.delegate = self
-                locationManager.requestWhenInUseAuthorization()
-                locationManager.startUpdatingLocation()
-            }
+        init(_ parent: MapView, locationStore: LocationStore) {
+            self.parent = parent
+            self.locationStore = locationStore // Assign the locationStore property
+            super.init()
+            locationManager.delegate = self
+            locationManager.requestWhenInUseAuthorization()
+            locationManager.startUpdatingLocation()
+        }
 
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
             guard let location = locations.last else { return }
@@ -89,6 +101,15 @@ struct MapView: UIViewRepresentable {
                         parent.centerOnUser = false
                     }
                 }
-
-    }
-}
+        @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+                   guard gestureRecognizer.state == .began else { return }
+                   let touchPoint = gestureRecognizer.location(in: gestureRecognizer.view)
+                   let coordinate = (gestureRecognizer.view as? MKMapView)?.convert(touchPoint, toCoordinateFrom: gestureRecognizer.view)
+                   
+                   if let coordinate = coordinate {
+                       // Call the addLocation function using the coordinates of the long press
+                       locationStore.addLocation(name: "name", category: "category", coordinate: coordinate)
+                   }
+               }
+           }
+       }
