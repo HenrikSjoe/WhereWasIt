@@ -5,6 +5,7 @@
 //  Created by Henrik Sjögren on 2023-05-09.
 //
 
+import MapKit
 import SwiftUI
 import MapKit
 
@@ -20,23 +21,35 @@ struct ContentView: View {
             ZStack {
                 MapView(centerOnUser: $centerOnUser)
                     .edgesIgnoringSafeArea(.all)
-                     
 
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: {
-                            centerOnUser.toggle()
-                        }) {
-                            Image(systemName: "location.fill")
-                                .font(.system(size: 25))
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.black.opacity(0.5))
-                                .clipShape(Circle())
-                                .padding(.trailing)
+                        VStack {
+                            Button(action: {
+                                // Add your functionality for adding to Firebase here
+                            }) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.black.opacity(0.5))
+                                    .clipShape(Circle())
+                            }
+                            
+                            Button(action: {
+                                centerOnUser = true
+                            }) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 25))
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.black.opacity(0.5))
+                                    .clipShape(Circle())
+                            }
                         }
+                        .padding(.trailing)
                     }
                 }
             }
@@ -44,3 +57,4 @@ struct ContentView: View {
         }
     }
 }
+

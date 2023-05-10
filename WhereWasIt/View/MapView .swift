@@ -9,14 +9,16 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+import SwiftUI
+import MapKit
+import CoreLocation
+
 struct MapView: UIViewRepresentable {
     @EnvironmentObject var locationStore: LocationStore
     @Binding var centerOnUser: Bool
 
     @State private var userLocation: CLLocation?
-    
-    @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 0, longitude: 0), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-    @State private var regionHasBeenSet: Bool = false
+    @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -26,15 +28,10 @@ struct MapView: UIViewRepresentable {
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
         if centerOnUser, let userLocation = userLocation {
-            let coordinate = userLocation.coordinate
-            region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-            centerOnUser = false
+            context.coordinator.centerMapOnUser(mapView, userLocation: userLocation)
         }
-        mapView.setRegion(region, animated: true)
         updateAnnotations(from: mapView)
     }
-
-
 
 
     func makeCoordinator() -> Coordinator {
@@ -60,26 +57,38 @@ struct MapView: UIViewRepresentable {
     }
 
     class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
-        var parent: MapView
-        let locationManager = CLLocationManager()
+            var parent: MapView
+            let locationManager = CLLocationManager()
 
-        init(_ parent: MapView) {
-            self.parent = parent
-            super.init()
-            locationManager.delegate = self
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.startUpdatingLocation()
-        }
+            init(_ parent: MapView) {
+                self.parent = parent
+                super.init()
+                locationManager.delegate = self
+                locationManager.requestWhenInUseAuthorization()
+                locationManager.startUpdatingLocation()
+            }
 
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
             guard let location = locations.last else { return }
             parent.userLocation = location
-            if !parent.regionHasBeenSet {
+            /*if !parent.regionHasBeenSet {
                 let coordinate = location.coordinate
                 parent.region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
                 parent.regionHasBeenSet = true
-            }
+            }*/
         }
-        
+        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+                    parent.region = mapView.region
+                }
+
+                func centerMapOnUser(_ mapView: MKMapView, userLocation: CLLocation) {
+                    let coordinate = userLocation.coordinate
+                    let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+                    mapView.setRegion(region, animated: true)
+                    DispatchQueue.main.async { [self] in
+                        parent.centerOnUser = false
+                    }
+                }
+
     }
 }
