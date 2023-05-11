@@ -31,6 +31,7 @@
 		AF96BA4D2A0A40FE005D7CA3 /* MapView .swift in Sources */ = {isa = PBXBuildFile; fileRef = AF96BA4C2A0A40FE005D7CA3 /* MapView .swift */; };
 		AF96BA4F2A0A410D005D7CA3 /* SearchSuggestionsView .swift in Sources */ = {isa = PBXBuildFile; fileRef = AF96BA4E2A0A410D005D7CA3 /* SearchSuggestionsView .swift */; };
 		AF96BA512A0A411A005D7CA3 /* LocationViewModel.swift .swift in Sources */ = {isa = PBXBuildFile; fileRef = AF96BA502A0A411A005D7CA3 /* LocationViewModel.swift .swift */; };
+		AFA2B6482A0CD41400FA79C3 /* SearchCompleterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA2B6472A0CD41400FA79C3 /* SearchCompleterViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		AF96BA4E2A0A410D005D7CA3 /* SearchSuggestionsView .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchSuggestionsView .swift"; sourceTree = "<group>"; };
 		AF96BA502A0A411A005D7CA3 /* LocationViewModel.swift .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocationViewModel.swift .swift"; sourceTree = "<group>"; };
 		AF96BA522A0B9067005D7CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AFA2B6472A0CD41400FA79C3 /* SearchCompleterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCompleterViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				AF96BA502A0A411A005D7CA3 /* LocationViewModel.swift .swift */,
+				AFA2B6472A0CD41400FA79C3 /* SearchCompleterViewModel.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFA2B6482A0CD41400FA79C3 /* SearchCompleterViewModel.swift in Sources */,
 				AF96BA4B2A0A40EE005D7CA3 /* ContentView.swift in Sources */,
 				AF209FED29EE907C00B59F66 /* Persistence.swift in Sources */,
 				AF96BA512A0A411A005D7CA3 /* LocationViewModel.swift .swift in Sources */,

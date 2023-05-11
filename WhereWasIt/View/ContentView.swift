@@ -5,7 +5,6 @@
 //  Created by Henrik Sjögren on 2023-05-09.
 //
 
-import MapKit
 import SwiftUI
 import MapKit
 
@@ -17,6 +16,8 @@ struct ContentView: View {
     @State private var showingDetail = false
     @State private var centerOnUser: Bool = false
     @State private var newLocationCoordinate: CLLocationCoordinate2D? = nil
+    @StateObject private var searchCompleter = SearchCompleterViewModel()
+    
     
     let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
     
@@ -41,11 +42,29 @@ struct ContentView: View {
                                     }
                                 }
                                 if newLocationCoordinate == nil {
-                                    TextField("Address", text: $newLocationAddress)
+                                    VStack(alignment: .leading) {
+                                        TextField("Address", text: $newLocationAddress)
+                                        .onChange(of: newLocationAddress) { newValue in
+                                            searchCompleter.searchQuery = newValue
+                                        }
+                                        List(searchCompleter.searchResults, id: \.title) { result in
+                                            VStack(alignment: .leading) {
+                                                Text(result.title)
+                                                Text(result.subtitle)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            .contentShape(Rectangle()) // This ensures the entire row is tappable, not just the text
+                                            .onTapGesture {
+                                                newLocationAddress = result.title
+                                            }
+                                        }
+
+
+                                    }
                                 }
-                            }
-                            
-                            Section {
+                            } // End of first section
+                            Section { // This was misplaced, it should be inside Form
                                 Button(action: {
                                     if let coordinate = self.newLocationCoordinate {
                                         locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate)
@@ -60,19 +79,25 @@ struct ContentView: View {
                                             }
                                         }
                                     }
+                                    self.newLocationAddress = ""
+                                    self.searchCompleter.searchResults.removeAll() // Clear search results
                                     self.showingDetail = false
                                 }) {
                                     Text("Add Location")
                                 }
-                            }
-                        }
+
+                            } // End of second section
+                        } // End of Form
                         .navigationBarTitle("New Location", displayMode: .inline)
                         .navigationBarItems(trailing: Button("Done") {
                             self.showingDetail = false
+                            self.newLocationAddress = ""
+                            self.searchCompleter.searchResults.removeAll()
+
                         })
                     }
                 }
-                
+
                 VStack {
                     Spacer()
                     HStack {
@@ -89,7 +114,7 @@ struct ContentView: View {
                                     .background(Color.black.opacity(0.5))
                                     .clipShape(Circle())
                             }
-                            
+
                             Button(action: {
                                 centerOnUser = true
                             }) {
@@ -108,7 +133,7 @@ struct ContentView: View {
             .navigationBarTitle("Where was it", displayMode: .inline)
         }
     }
-    
+                                        
     func geocode(address: String, completion: @escaping (CLLocationCoordinate2D?) -> Void) {
         geocoder.geocodeAddressString(address) { placemarks, error in
             guard let placemark = placemarks?.first, let location = placemark.location else {
@@ -120,4 +145,13 @@ struct ContentView: View {
         }
     }
 }
+
+
+                                    
+
+                                    //struct ContentView_Previews: PreviewProvider {
+                                    //    static var previews: some View {
+                                    //        ContentView()
+                                    //    }
+                                    //}
 
