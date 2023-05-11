@@ -47,3 +47,4 @@ extension CLLocationCoordinate2D: Codable {
         try container.encode(longitude, forKey: .longitude)
     }
 }
+

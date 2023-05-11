@@ -13,6 +13,8 @@ import CoreLocation
 struct MapView: UIViewRepresentable {
     @EnvironmentObject var locationStore: LocationStore
     @Binding var centerOnUser: Bool
+    var onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil
+
 
     @State private var userLocation: CLLocation?
     @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
@@ -71,23 +73,19 @@ struct MapView: UIViewRepresentable {
             var locationStore: LocationStore
             let locationManager = CLLocationManager()
 
-        init(_ parent: MapView, locationStore: LocationStore) {
-            self.parent = parent
-            self.locationStore = locationStore // Assign the locationStore property
-            super.init()
-            locationManager.delegate = self
-            locationManager.requestWhenInUseAuthorization()
-            locationManager.startUpdatingLocation()
-        }
+            init(_ parent: MapView, locationStore: LocationStore) {
+                self.parent = parent
+                self.locationStore = locationStore
+                super.init()
+                locationManager.delegate = self
+                locationManager.requestWhenInUseAuthorization()
+                locationManager.startUpdatingLocation()
+            }
 
         func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
             guard let location = locations.last else { return }
             parent.userLocation = location
-            /*if !parent.regionHasBeenSet {
-                let coordinate = location.coordinate
-                parent.region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-                parent.regionHasBeenSet = true
-            }*/
+            
         }
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
                     parent.region = mapView.region
@@ -102,14 +100,12 @@ struct MapView: UIViewRepresentable {
                     }
                 }
         @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-                   guard gestureRecognizer.state == .began else { return }
-                   let touchPoint = gestureRecognizer.location(in: gestureRecognizer.view)
-                   let coordinate = (gestureRecognizer.view as? MKMapView)?.convert(touchPoint, toCoordinateFrom: gestureRecognizer.view)
-                   
-                   if let coordinate = coordinate {
-                       // Call the addLocation function using the coordinates of the long press
-                       locationStore.addLocation(name: "name", category: "category", coordinate: coordinate)
-                   }
+                    guard gestureRecognizer.state == .began else { return }
+                    let touchPoint = gestureRecognizer.location(in: gestureRecognizer.view)
+                    let coordinate = (gestureRecognizer.view as? MKMapView)?.convert(touchPoint, toCoordinateFrom: gestureRecognizer.view)
+                    if let coordinate = coordinate {
+                        parent.onLongPress?(coordinate)                   }
                }
            }
        }
+
