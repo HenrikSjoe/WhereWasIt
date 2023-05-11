@@ -41,7 +41,15 @@ class LocationViewModel: ObservableObject {
             }
 
             self.searchResults = response.mapItems.map { mapItem in
-                Location(name: mapItem.name ?? "", category: mapItem.pointOfInterestCategory?.rawValue ?? "", coordinate: mapItem.placemark.coordinate)
+                // We'll use the current date as a placeholder for firstSeen and lastSeen
+                let placeholderDate = Date()
+                return Location(
+                    name: mapItem.name ?? "",
+                    category: mapItem.pointOfInterestCategory?.rawValue ?? "",
+                    coordinate: mapItem.placemark.coordinate,
+                    firstSeen: placeholderDate,
+                    lastSeen: placeholderDate
+                )
             }
         }
     }

@@ -10,18 +10,19 @@ import MapKit
 
 struct ContentView: View {
     @EnvironmentObject var locationStore: LocationStore
-    @State private var newLocationName: String = ""
-    @State private var newLocationCategory: String = "Restaurant"
-    @State private var newLocationAddress: String = ""
-    @State private var showingDetail = false
-    @State private var centerOnUser: Bool = false
-    @State private var newLocationCoordinate: CLLocationCoordinate2D? = nil
-    @StateObject private var searchCompleter = SearchCompleterViewModel()
-    
-    
-    let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
-    
-    let geocoder = CLGeocoder()
+        @State private var newLocationName: String = ""
+        @State private var newLocationCategory: String = "Restaurant"
+        @State private var newLocationAddress: String = ""
+        @State private var showingDetail = false
+        @State private var centerOnUser: Bool = false
+        @State private var newLocationCoordinate: CLLocationCoordinate2D? = nil
+        @State private var firstSeen: Date = Date()
+        @State private var lastSeen: Date = Date()
+        @StateObject private var searchCompleter = SearchCompleterViewModel()
+        
+        let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
+        
+        let geocoder = CLGeocoder()
     
     var body: some View {
         NavigationView {
@@ -63,28 +64,30 @@ struct ContentView: View {
 
                                     }
                                 }
+                                DatePicker("First Seen", selection: $firstSeen, displayedComponents: .date)
+                                                DatePicker("Last Seen", selection: $lastSeen, displayedComponents: .date)
                             } // End of first section
-                            Section { // This was misplaced, it should be inside Form
-                                Button(action: {
-                                    if let coordinate = self.newLocationCoordinate {
-                                        locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate)
-                                        self.newLocationName = ""
-                                        self.newLocationCategory = "Restaurant"
-                                    } else {
-                                        geocode(address: self.newLocationAddress) { coordinate in
-                                            if let coordinate = coordinate {
-                                                locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate)
-                                                self.newLocationName = ""
-                                                self.newLocationCategory = "Restaurant"
+                            Section {
+                                            Button(action: {
+                                                if let coordinate = self.newLocationCoordinate {
+                                                    locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                    self.newLocationName = ""
+                                                    self.newLocationCategory = "Restaurant"
+                                                } else {
+                                                    geocode(address: self.newLocationAddress) { coordinate in
+                                                        if let coordinate = coordinate {
+                                                            locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                            self.newLocationName = ""
+                                                            self.newLocationCategory = "Restaurant"
+                                                        }
+                                                    }
+                                                }
+                                                self.newLocationAddress = ""
+                                                self.searchCompleter.searchResults.removeAll() // Clear search results
+                                                self.showingDetail = false
+                                            }) {
+                                                Text("Add Location")
                                             }
-                                        }
-                                    }
-                                    self.newLocationAddress = ""
-                                    self.searchCompleter.searchResults.removeAll() // Clear search results
-                                    self.showingDetail = false
-                                }) {
-                                    Text("Add Location")
-                                }
 
                             } // End of second section
                         } // End of Form

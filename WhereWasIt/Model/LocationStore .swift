@@ -38,8 +38,8 @@ class LocationStore: ObservableObject {
         }
     }
 
-    func addLocation(name: String, category: String, coordinate: CLLocationCoordinate2D) {
-        let newLocation = Location(id: UUID().uuidString, name: name, category: category, coordinate: coordinate)
+    func addLocation(name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date) {
+        let newLocation = Location(id: UUID().uuidString, name: name, category: category, coordinate: coordinate, firstSeen: firstSeen, lastSeen: lastSeen)
 
         do {
             try db.collection(locationCollection).document(newLocation.id).setData(from: newLocation)
@@ -47,8 +47,6 @@ class LocationStore: ObservableObject {
             print("Error adding location: \(error)")
         }
     }
-    
-    
 
     func deleteLocation(location: Location) {
         db.collection(locationCollection).document(location.id).delete { error in
@@ -60,4 +58,3 @@ class LocationStore: ObservableObject {
         }
     }
 }
-

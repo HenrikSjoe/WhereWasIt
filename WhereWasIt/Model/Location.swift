@@ -13,18 +13,23 @@ struct Location: Identifiable, Codable {
     let name: String
     let category: String
     let coordinate: CLLocationCoordinate2D
+    let firstSeen: Date
+    let lastSeen: Date
 
-    init(id: String = UUID().uuidString, name: String, category: String, coordinate: CLLocationCoordinate2D) {
+    init(id: String = UUID().uuidString, name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date) {
         self.id = id
         self.name = name
         self.category = category
         self.coordinate = coordinate
+        self.firstSeen = firstSeen
+        self.lastSeen = lastSeen
     }
 }
 
 extension Location {
     static func example() -> Location {
-        return Location(name: "Example Place", category: "Restaurant", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194))
+        let exampleDate = Date()
+        return Location(name: "Example Place", category: "Restaurant", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), firstSeen: exampleDate, lastSeen: exampleDate)
     }
 }
 
@@ -47,4 +52,3 @@ extension CLLocationCoordinate2D: Codable {
         try container.encode(longitude, forKey: .longitude)
     }
 }
-
