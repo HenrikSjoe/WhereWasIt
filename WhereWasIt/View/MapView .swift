@@ -87,9 +87,36 @@ struct MapView: UIViewRepresentable {
             parent.userLocation = location
             
         }
-        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-                    parent.region = mapView.region
-                }
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            guard let locationAnnotation = annotation as? LocationAnnotation else { return nil }
+            
+            let identifier = "Location"
+            
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = true
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            switch locationAnnotation.subtitle {
+            case "Restaurant":
+                (annotationView as? MKMarkerAnnotationView)?.glyphImage = UIImage(systemName: "fork.knife")
+            case "Bar":
+                (annotationView as? MKMarkerAnnotationView)?.glyphImage = UIImage(systemName: "wineglass.fill")
+            case "Nightclub":
+                (annotationView as? MKMarkerAnnotationView)?.glyphImage = UIImage(systemName: "figure.socialdance")
+            case "Store":
+                (annotationView as? MKMarkerAnnotationView)?.glyphImage = UIImage(systemName: "bag.fill")
+            default:
+                (annotationView as? MKMarkerAnnotationView)?.glyphImage = UIImage(systemName: "questionmark.circle")
+            }
+            
+            return annotationView
+        }
+
 
                 func centerMapOnUser(_ mapView: MKMapView, userLocation: CLLocation) {
                     let coordinate = userLocation.coordinate
