@@ -30,12 +30,16 @@ struct MapView: UIViewRepresentable {
         let mapView = MKMapView(frame: .zero)
         mapView.delegate = context.coordinator
         
+        // Show user's location
+        mapView.showsUserLocation = true
+        
         // Add long press gesture recognizer
         let longPressRecognizer = UILongPressGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleLongPress))
         mapView.addGestureRecognizer(longPressRecognizer)
         
         return mapView
     }
+
 
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
