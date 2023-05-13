@@ -13,6 +13,7 @@ import Firebase
 @main
 struct WhereWasItApp: App {
     @StateObject private var locationStore = LocationStore()
+    @StateObject var userAuth = UserAuth()
 
     init() {
         FirebaseApp.configure()
@@ -20,8 +21,10 @@ struct WhereWasItApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            //ContentView()
+            LoginView()
                 .environmentObject(locationStore)
+                .environmentObject(userAuth)
         }
     }
 }

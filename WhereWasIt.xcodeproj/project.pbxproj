@@ -32,6 +32,10 @@
 		AF96BA4F2A0A410D005D7CA3 /* SearchSuggestionsView .swift in Sources */ = {isa = PBXBuildFile; fileRef = AF96BA4E2A0A410D005D7CA3 /* SearchSuggestionsView .swift */; };
 		AF96BA512A0A411A005D7CA3 /* LocationViewModel.swift .swift in Sources */ = {isa = PBXBuildFile; fileRef = AF96BA502A0A411A005D7CA3 /* LocationViewModel.swift .swift */; };
 		AFA2B6482A0CD41400FA79C3 /* SearchCompleterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA2B6472A0CD41400FA79C3 /* SearchCompleterViewModel.swift */; };
+		AFA2B64A2A0D1F4700FA79C3 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA2B6492A0D1F4700FA79C3 /* LoginView.swift */; };
+		AFA2B64D2A0D201000FA79C3 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AFA2B64C2A0D201000FA79C3 /* GoogleSignIn */; };
+		AFA2B64F2A0D201000FA79C3 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AFA2B64E2A0D201000FA79C3 /* GoogleSignInSwift */; };
+		AFA2B6512A0E57F300FA79C3 /* UserAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +76,8 @@
 		AF96BA502A0A411A005D7CA3 /* LocationViewModel.swift .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocationViewModel.swift .swift"; sourceTree = "<group>"; };
 		AF96BA522A0B9067005D7CA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		AFA2B6472A0CD41400FA79C3 /* SearchCompleterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCompleterViewModel.swift; sourceTree = "<group>"; };
+		AFA2B6492A0D1F4700FA79C3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuth.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,10 +90,12 @@
 				AF96BA422A03CAA6005D7CA3 /* FirebaseStorage in Frameworks */,
 				AF96BA362A03CAA6005D7CA3 /* FirebaseDatabaseSwift in Frameworks */,
 				AF96BA3E2A03CAA6005D7CA3 /* FirebaseInAppMessagingSwift-Beta in Frameworks */,
+				AFA2B64D2A0D201000FA79C3 /* GoogleSignIn in Frameworks */,
 				AF96BA382A03CAA6005D7CA3 /* FirebaseFirestore in Frameworks */,
 				AF96BA342A03CAA6005D7CA3 /* FirebaseDatabase in Frameworks */,
 				AF96BA322A03CAA6005D7CA3 /* FirebaseAuth in Frameworks */,
 				AF96BA3C2A03CAA6005D7CA3 /* FirebaseInAppMessaging-Beta in Frameworks */,
+				AFA2B64F2A0D201000FA79C3 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +183,7 @@
 			children = (
 				AF96BA462A0A40CC005D7CA3 /* Location.swift */,
 				AF96BA482A0A40DB005D7CA3 /* LocationStore .swift */,
+				AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -185,6 +194,7 @@
 				AF96BA4A2A0A40EE005D7CA3 /* ContentView.swift */,
 				AF96BA4C2A0A40FE005D7CA3 /* MapView .swift */,
 				AF96BA4E2A0A410D005D7CA3 /* SearchSuggestionsView .swift */,
+				AFA2B6492A0D1F4700FA79C3 /* LoginView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -224,6 +234,8 @@
 				AF96BA3D2A03CAA6005D7CA3 /* FirebaseInAppMessagingSwift-Beta */,
 				AF96BA3F2A03CAA6005D7CA3 /* FirebaseMessaging */,
 				AF96BA412A03CAA6005D7CA3 /* FirebaseStorage */,
+				AFA2B64C2A0D201000FA79C3 /* GoogleSignIn */,
+				AFA2B64E2A0D201000FA79C3 /* GoogleSignInSwift */,
 			);
 			productName = WhereWasIt;
 			productReference = AF209FE029EE907B00B59F66 /* WhereWasIt.app */;
@@ -299,6 +311,7 @@
 			mainGroup = AF209FD729EE907B00B59F66;
 			packageReferences = (
 				AF96BA302A03CAA6005D7CA3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				AFA2B64B2A0D201000FA79C3 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = AF209FE129EE907B00B59F66 /* Products */;
 			projectDirPath = "";
@@ -349,8 +362,10 @@
 				AF96BA512A0A411A005D7CA3 /* LocationViewModel.swift .swift in Sources */,
 				AF96BA4D2A0A40FE005D7CA3 /* MapView .swift in Sources */,
 				AF96BA4F2A0A410D005D7CA3 /* SearchSuggestionsView .swift in Sources */,
+				AFA2B6512A0E57F300FA79C3 /* UserAuth.swift in Sources */,
 				AF96BA492A0A40DB005D7CA3 /* LocationStore .swift in Sources */,
 				AF96BA472A0A40CC005D7CA3 /* Location.swift in Sources */,
+				AFA2B64A2A0D1F4700FA79C3 /* LoginView.swift in Sources */,
 				AF209FF029EE907C00B59F66 /* WhereWasIt.xcdatamodeld in Sources */,
 				AF209FE429EE907B00B59F66 /* WhereWasItApp.swift in Sources */,
 			);
@@ -691,6 +706,14 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		AFA2B64B2A0D201000FA79C3 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -738,6 +761,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF96BA302A03CAA6005D7CA3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		AFA2B64C2A0D201000FA79C3 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFA2B64B2A0D201000FA79C3 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		AFA2B64E2A0D201000FA79C3 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AFA2B64B2A0D201000FA79C3 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 

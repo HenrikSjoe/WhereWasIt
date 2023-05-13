@@ -19,93 +19,87 @@ struct ContentView: View {
         @State private var firstSeen: Date = Date()
         @State private var lastSeen: Date = Date()
         @StateObject private var searchCompleter = SearchCompleterViewModel()
-        
+        @EnvironmentObject var userAuth: UserAuth
+
         let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
         
         let geocoder = CLGeocoder()
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                MapView(centerOnUser: $centerOnUser, onLongPress: { coordinate in
-                    self.newLocationCoordinate = coordinate
-                    self.showingDetail = true
-                })
-                .edgesIgnoringSafeArea(.all)
-                .sheet(isPresented: $showingDetail) {
-                    NavigationView {
-                        Form {
-                            Section(header: Text("Location Details")) {
-                                TextField("Name", text: $newLocationName)
-                                Picker("Category", selection: $newLocationCategory) {
-                                    ForEach(categories, id: \.self) {
-                                        Text($0)
-                                    }
-                                }
-                                if newLocationCoordinate == nil {
-                                    VStack(alignment: .leading) {
-                                        TextField("Address", text: $newLocationAddress)
-                                        .onChange(of: newLocationAddress) { newValue in
-                                            searchCompleter.searchQuery = newValue
-                                        }
-                                        List(searchCompleter.searchResults, id: \.title) { result in
-                                            VStack(alignment: .leading) {
-                                                Text(result.title)
-                                                Text(result.subtitle)
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.gray)
-                                            }
-                                            .contentShape(Rectangle()) // This ensures the entire row is tappable, not just the text
-                                            .onTapGesture {
-                                                newLocationAddress = result.title
-                                            }
-                                        }
-
-
-                                    }
-                                }
-                                DatePicker("First Seen", selection: $firstSeen, displayedComponents: .date)
-                                                DatePicker("Last Seen", selection: $lastSeen, displayedComponents: .date)
-                            } // End of first section
-                            Section {
-                                            Button(action: {
-                                                if let coordinate = self.newLocationCoordinate {
-                                                    locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
-                                                    self.newLocationName = ""
-                                                    self.newLocationCategory = "Restaurant"
-                                                } else {
-                                                    geocode(address: self.newLocationAddress) { coordinate in
-                                                        if let coordinate = coordinate {
-                                                            locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
-                                                            self.newLocationName = ""
-                                                            self.newLocationCategory = "Restaurant"
+        ZStack {
+            MapView(centerOnUser: $centerOnUser, onLongPress: { coordinate in
+                self.newLocationCoordinate = coordinate
+                self.showingDetail = true
+            })
+            .edgesIgnoringSafeArea(.all)
+            .sheet(isPresented: $showingDetail) {
+                Form {
+                                            Section(header: Text("Location Details")) {
+                                                TextField("Name", text: $newLocationName)
+                                                Picker("Category", selection: $newLocationCategory) {
+                                                    ForEach(categories, id: \.self) {
+                                                        Text($0)
+                                                    }
+                                                }
+                                                if newLocationCoordinate == nil {
+                                                    VStack(alignment: .leading) {
+                                                        TextField("Address", text: $newLocationAddress)
+                                                        .onChange(of: newLocationAddress) { newValue in
+                                                            searchCompleter.searchQuery = newValue
+                                                        }
+                                                        List(searchCompleter.searchResults, id: \.title) { result in
+                                                            VStack(alignment: .leading) {
+                                                                Text(result.title)
+                                                                Text(result.subtitle)
+                                                                    .font(.subheadline)
+                                                                    .foregroundColor(.gray)
+                                                            }
+                                                            .contentShape(Rectangle())
+                                                            .onTapGesture {
+                                                                newLocationAddress = result.title
+                                                            }
                                                         }
                                                     }
                                                 }
-                                                self.newLocationAddress = ""
-                                                self.searchCompleter.searchResults.removeAll() // Clear search results
-                                                self.showingDetail = false
-                                            }) {
-                                                Text("Add Location")
+                                                DatePicker("First Seen", selection: $firstSeen, displayedComponents: .date)
+                                                DatePicker("Last Seen", selection: $lastSeen, displayedComponents: .date)
                                             }
+                                            Section {
+                                                Button(action: {
+                                                    if let coordinate = self.newLocationCoordinate {
+                                                        locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                        self.newLocationName = ""
+                                                        self.newLocationCategory = "Restaurant"
+                                                    } else {
+                                                        geocode(address: self.newLocationAddress) { coordinate in
+                                                            if let coordinate = coordinate {
+                                                                locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                                self.newLocationName = ""
+                                                                self.newLocationCategory = "Restaurant"
+                                                            }
+                                                        }
+                                                    }
+                                                    self.newLocationAddress = ""
+                                                    self.searchCompleter.searchResults.removeAll()
+                                                    self.showingDetail = false
+                                                }) {
+                                                    Text("Add Location")
+                                                }
+                                            }
+                                        }
+                .navigationBarItems(trailing: Button("Done") {
+                    self.showingDetail = false
+                    self.newLocationAddress = ""
+                    self.searchCompleter.searchResults.removeAll()
+                })
+            }
 
-                            } // End of second section
-                        } // End of Form
-                        .navigationBarTitle("New Location", displayMode: .inline)
-                        .navigationBarItems(trailing: Button("Done") {
-                            self.showingDetail = false
-                            self.newLocationAddress = ""
-                            self.searchCompleter.searchResults.removeAll()
-
-                        })
-                    }
-                }
-
-                VStack {
+            VStack {
+                Spacer()
+                HStack {
                     Spacer()
-                    HStack {
-                        Spacer()
-                        VStack {
+                    VStack {
+                        if userAuth.isSignedIn {
                             Button(action: {
                                 self.newLocationCoordinate = nil
                                 self.showingDetail = true
@@ -117,25 +111,28 @@ struct ContentView: View {
                                     .background(Color.black.opacity(0.5))
                                     .clipShape(Circle())
                             }
-
-                            Button(action: {
-                                centerOnUser = true
-                            }) {
-                                Image(systemName: "location.fill")
-                                    .font(.system(size: 25))
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.black.opacity(0.5))
-                                    .clipShape(Circle())
-                            }
                         }
-                        .padding(.trailing)
+
+                        Button(action: {
+                            centerOnUser = true
+                        }) {
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 25))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
                     }
+                    .padding(.trailing)
                 }
             }
-            .navigationBarTitle("Where was it", displayMode: .inline)
         }
+        .navigationBarTitle("Where Was It", displayMode: .inline)
     }
+
+           
+
                                         
     func geocode(address: String, completion: @escaping (CLLocationCoordinate2D?) -> Void) {
         geocoder.geocodeAddressString(address) { placemarks, error in

@@ -12,6 +12,7 @@ import CoreLocation
 
 struct MapView: UIViewRepresentable {
     @EnvironmentObject var locationStore: LocationStore
+    @EnvironmentObject var userAuth: UserAuth
     @Binding var centerOnUser: Bool
     var onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil
 
@@ -126,13 +127,21 @@ struct MapView: UIViewRepresentable {
                         parent.centerOnUser = false
                     }
                 }
-        @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-                    guard gestureRecognizer.state == .began else { return }
-                    let touchPoint = gestureRecognizer.location(in: gestureRecognizer.view)
-                    let coordinate = (gestureRecognizer.view as? MKMapView)?.convert(touchPoint, toCoordinateFrom: gestureRecognizer.view)
-                    if let coordinate = coordinate {
-                        parent.onLongPress?(coordinate)                   }
-               }
+            @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+            // Check if the user is signed in
+            if !parent.userAuth.isSignedIn {
+                // If the user is not signed in, don't perform any action
+                return
+            }
+
+            guard gestureRecognizer.state == .began else { return }
+            let touchPoint = gestureRecognizer.location(in: gestureRecognizer.view)
+            let coordinate = (gestureRecognizer.view as? MKMapView)?.convert(touchPoint, toCoordinateFrom: gestureRecognizer.view)
+            if let coordinate = coordinate {
+                parent.onLongPress?(coordinate)
+            }
+        }
+
            }
        }
 
