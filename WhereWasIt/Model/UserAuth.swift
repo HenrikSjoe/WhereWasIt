@@ -11,8 +11,8 @@ import Combine
 class UserAuth: ObservableObject {
     @Published private(set) var user: User?
     @Published var isSignedIn: Bool = false
-    @Published var userId: String = "" // add this line
-
+    @Published var userId: String = ""
+    
     func signIn(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
@@ -21,17 +21,17 @@ class UserAuth: ObservableObject {
                 print("Successfully signed in!")
                 self.user = authResult?.user
                 self.isSignedIn = true
-                self.userId = authResult?.user.uid ?? "" // add this line
+                self.userId = authResult?.user.uid ?? ""
             }
         }
     }
-
+    
     func signOut() {
         do {
             try Auth.auth().signOut()
             self.isSignedIn = false
             self.user = nil
-            self.userId = "" // add this line
+            self.userId = ""
         } catch {
             print("Error signing out: \(error)")
         }

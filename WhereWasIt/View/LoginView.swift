@@ -11,7 +11,7 @@ import FirebaseAuth
 struct NavigationHandler: ViewModifier {
     @Binding var value: Bool
     let destination: () -> AnyView
-
+    
     func body(content: Content) -> some View {
         Group {
             if value {
@@ -37,7 +37,7 @@ struct LoginView: View {
     @State private var browseTheMap: Bool = false
     @EnvironmentObject var userAuth: UserAuth
     @EnvironmentObject var locationStore: LocationStore
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -60,7 +60,7 @@ struct LoginView: View {
                     .fullScreenCover(isPresented: $browseTheMap, content: {
                         ContentView().environmentObject(userAuth).environmentObject(locationStore)
                     })
-
+                    
                     Button(action: { self.showSignUp = true }) {
                         Text("Sign Up")
                     }
@@ -74,7 +74,7 @@ struct LoginView: View {
             })
         }
     }
-
+    
     private func signIn() {
         userAuth.signIn(email: email, password: password)
     }
@@ -114,10 +114,10 @@ struct SignUpView: View {
                 print("Successfully signed up!")
                 errorMessage = ""
                 userAuth.isSignedIn = true
-                userAuth.userId = authResult?.user.uid ?? "" // directly assign the userId
+                userAuth.userId = authResult?.user.uid ?? ""
             }
         }
     }
-
-
+    
+    
 }

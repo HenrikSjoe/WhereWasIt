@@ -21,49 +21,41 @@ struct ContentView: View {
     @StateObject private var searchCompleter = SearchCompleterViewModel()
     @EnvironmentObject var userAuth: UserAuth
     @State private var isPrivate: Bool = false
-
+    @State private var showingFilter = false
+    @State private var filters: LocationFilters = LocationFilters()
+    
+    
     let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
-
+    
     let geocoder = CLGeocoder()
-
+    
     var body: some View {
-            ZStack {
-                MapView(centerOnUser: $centerOnUser, onLongPress: { coordinate in
-                    self.newLocationCoordinate = coordinate
-                    self.showingDetail = true
-                })
-                .edgesIgnoringSafeArea(.all)
-                .navigationBarTitle("Where Was It", displayMode: .inline)
-
-                VStack {
-                    HStack {
-                        Spacer()
-                        MenuView(showingDetail: $showingDetail)
-                            .padding(.trailing)
-                    }
+        ZStack {
+            MapView(centerOnUser: $centerOnUser, filters: $filters, onLongPress: { coordinate in
+                self.newLocationCoordinate = coordinate
+                self.showingDetail = true
+            })
+            
+            .edgesIgnoringSafeArea(.all)
+            .navigationBarTitle("Where Was It", displayMode: .inline)
+            
+            VStack {
+                HStack {
                     Spacer()
-                    
-                    HStack {
-                        Spacer()
-                        VStack {
-                            if userAuth.isSignedIn {
-                                Button(action: {
-                                    self.newLocationCoordinate = nil
-                                    self.showingDetail = true
-                                }) {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 25))
-                                        .foregroundColor(.white)
-                                        .padding()
-                                        .background(Color.black.opacity(0.5))
-                                        .clipShape(Circle())
-                                }
-                            }
-                            
+                    MenuView(showingDetail: $showingDetail, showingFilter: $showingFilter)
+                        .padding(.trailing)
+                }
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    VStack {
+                        if userAuth.isSignedIn {
                             Button(action: {
-                                centerOnUser = true
+                                self.newLocationCoordinate = nil
+                                self.showingDetail = true
                             }) {
-                                Image(systemName: "location.fill")
+                                Image(systemName: "plus")
                                     .font(.system(size: 25))
                                     .foregroundColor(.white)
                                     .padding()
@@ -71,10 +63,33 @@ struct ContentView: View {
                                     .clipShape(Circle())
                             }
                         }
-                        .padding(.trailing)
+                        
+                        Button(action: {
+                            centerOnUser = true
+                        }) {
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 25))
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
                     }
+                    .padding(.trailing)
+                    .navigationBarItems(trailing: Button(action: {
+                        self.filters.applyFilter = false
+                        self.showingFilter = true
+                    }) {
+                        Image(systemName: "line.horizontal.3.decrease.circle")
+                    })
+                    .sheet(isPresented: $showingFilter) {
+                        FilterView(filters: $filters)
+                            .environmentObject(locationStore)
+                    }
+                    
                 }
             }
+        }
         .sheet(isPresented: $showingDetail) {
             Form {
                 Section(header: Text("Location Details")) {
@@ -158,9 +173,9 @@ struct ContentView: View {
         
         .navigationBarTitle("Where Was It", displayMode: .inline)
     }
-       
     
-
+    
+    
     func geocode(address: String, completion: @escaping (CLLocationCoordinate2D?) -> Void) {
         geocoder.geocodeAddressString(address) { placemarks, error in
             guard let placemark = placemarks?.first, let location = placemark.location else {

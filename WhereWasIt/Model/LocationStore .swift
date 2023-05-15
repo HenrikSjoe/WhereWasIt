@@ -21,9 +21,17 @@ class LocationStore: ObservableObject {
     @Published var publicLocations: [Location] = []
     @Published var privateLocations: [Location] = []
     @Published var locations: [Location] = []
+    @Published var filteredLocations: [Location] = []
+    @Published var filters: LocationFilters = LocationFilters() {
+            didSet {
+                self.filteredLocations = filterLocations(filters: self.filters)
+            }
+        }
     
+    
+    let categories: [String] = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
     private var cancellables: Set<AnyCancellable> = []
-
+    
     init(userAuth: UserAuth) {
         self.userAuth = userAuth
         self.userAuth.$user.sink { [weak self] user in
@@ -34,39 +42,36 @@ class LocationStore: ObservableObject {
     
     
     private func fetchLocations() {
-            // Fetch public locations
-            db.collection(publicLocationCollection).addSnapshotListener { snapshot, error in
+        db.collection(publicLocationCollection).addSnapshotListener { snapshot, error in
+            if let error = error {
+                print("Error fetching public locations: \(error)")
+                return
+            }
+            
+            guard let documents = snapshot?.documents else { return }
+            self.publicLocations = documents.compactMap { try? $0.data(as: Location.self) }
+            self.updateLocations()
+        }
+        
+        if let user = userAuth.user {
+            db.collection(userCollection).document(user.uid).collection(locationCollection).addSnapshotListener { snapshot, error in
                 if let error = error {
-                    print("Error fetching public locations: \(error)")
+                    print("Error fetching private locations: \(error)")
                     return
                 }
                 
                 guard let documents = snapshot?.documents else { return }
-                self.publicLocations = documents.compactMap { try? $0.data(as: Location.self) }
+                self.privateLocations = documents.compactMap { try? $0.data(as: Location.self) }
                 self.updateLocations()
             }
-            
-            // Fetch private locations if the user is signed in
-            if let user = userAuth.user {
-                db.collection(userCollection).document(user.uid).collection(locationCollection).addSnapshotListener { snapshot, error in
-                    if let error = error {
-                        print("Error fetching private locations: \(error)")
-                        return
-                    }
-                    
-                    guard let documents = snapshot?.documents else { return }
-                    self.privateLocations = documents.compactMap { try? $0.data(as: Location.self) }
-                    self.updateLocations()
-                }
-            }
         }
+    }
     
     private func updateLocations() {
-            self.locations = publicLocations + privateLocations
-        }
-
-
-
+        self.locations = publicLocations + privateLocations
+    }
+    
+    
     func addLocation(name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date, isPrivate: Bool) {
         guard let userId = userAuth.user?.uid else { return }
         let newLocation = Location(name: name, category: category, coordinate: coordinate, firstSeen: firstSeen, lastSeen: lastSeen, isPrivate: isPrivate, userId: userId)
@@ -82,5 +87,30 @@ class LocationStore: ObservableObject {
             print("There was an error while trying to save a location \(error.localizedDescription).")
         }
     }
-
+    
+    func filterLocations(filters: LocationFilters) -> [Location] {
+        if !filters.applyFilter {
+            return locations
+        }
+        
+        var filteredLocations = locations
+        
+        if filters.applyCategoryFilter && !filters.category.isEmpty {
+            filteredLocations = filteredLocations.filter { $0.category == filters.category }
+        }
+        
+        if filters.applyDateFilter {
+            filteredLocations = filteredLocations.filter { $0.firstSeen >= filters.startDate && $0.lastSeen <= filters.endDate }
+        }
+        
+        if filters.applyPrivacyFilter {
+            filteredLocations = filteredLocations.filter { $0.isPrivate == filters.isPrivate }
+        }
+        
+        if !filters.name.isEmpty {
+            filteredLocations = filteredLocations.filter { $0.name.lowercased().contains(filters.name.lowercased()) }
+        }
+        
+        return filteredLocations
+    }
 }

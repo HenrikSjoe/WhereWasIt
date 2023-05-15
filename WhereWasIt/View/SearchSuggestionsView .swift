@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchSuggestionsView: View {
     @EnvironmentObject var locationStore: LocationStore
     var didSelectSuggestion: (Location) -> Void
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(locationStore.locations) { location in

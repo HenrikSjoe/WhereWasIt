@@ -16,8 +16,8 @@ struct Location: Identifiable, Codable {
     let firstSeen: Date
     let lastSeen: Date
     let isPrivate: Bool
-    let userId: String // userId of the user who created the location
-
+    let userId: String
+    
     init(id: String = UUID().uuidString, name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date, isPrivate: Bool, userId: String) {
         self.id = id
         self.name = name
@@ -44,14 +44,14 @@ extension CLLocationCoordinate2D: Codable {
         case latitude
         case longitude
     }
-
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let latitude = try container.decode(CLLocationDegrees.self, forKey: .latitude)
         let longitude = try container.decode(CLLocationDegrees.self, forKey: .longitude)
         self.init(latitude: latitude, longitude: longitude)
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(latitude, forKey: .latitude)

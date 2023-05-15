@@ -12,9 +12,9 @@ import Combine
 class LocationViewModel: ObservableObject {
     @Published var searchQuery: String = ""
     @Published var searchResults: [Location] = []
-
+    
     private var searchCancellable: AnyCancellable?
-
+    
     init() {
         searchCancellable = $searchQuery
             .debounce(for: 0.3, scheduler: RunLoop.main)
@@ -23,25 +23,24 @@ class LocationViewModel: ObservableObject {
                 self.searchLocations(query: query)
             })
     }
-
+    
     private func searchLocations(query: String) {
         guard !query.isEmpty else {
             searchResults = []
             return
         }
-
+        
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
-
+        
         let search = MKLocalSearch(request: request)
         search.start { response, error in
             guard let response = response else {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-
+            
             self.searchResults = response.mapItems.map { mapItem in
-                // We'll use the current date as a placeholder for firstSeen and lastSeen
                 let placeholderDate = Date()
                 return Location(
                     name: mapItem.name ?? "",
@@ -49,12 +48,12 @@ class LocationViewModel: ObservableObject {
                     coordinate: mapItem.placemark.coordinate,
                     firstSeen: placeholderDate,
                     lastSeen: placeholderDate,
-                    isPrivate: false ,// and this line
-                    userId: "" // add this line
+                    isPrivate: false ,
+                    userId: ""
                     
                 )
             }
-
+            
         }
     }
 }

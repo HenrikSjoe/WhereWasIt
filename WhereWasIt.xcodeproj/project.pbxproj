@@ -37,6 +37,8 @@
 		AFA2B64F2A0D201000FA79C3 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AFA2B64E2A0D201000FA79C3 /* GoogleSignInSwift */; };
 		AFA2B6512A0E57F300FA79C3 /* UserAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */; };
 		AFD9FD2C2A124DB0008FCEDF /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD9FD2B2A124DB0008FCEDF /* MenuView.swift */; };
+		AFD9FD2E2A1253F0008FCEDF /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD9FD2D2A1253F0008FCEDF /* FilterView.swift */; };
+		AFD9FD302A126875008FCEDF /* LocationFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD9FD2F2A126875008FCEDF /* LocationFilters.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +82,8 @@
 		AFA2B6492A0D1F4700FA79C3 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuth.swift; sourceTree = "<group>"; };
 		AFD9FD2B2A124DB0008FCEDF /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		AFD9FD2D2A1253F0008FCEDF /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		AFD9FD2F2A126875008FCEDF /* LocationFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFilters.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +190,7 @@
 				AF96BA462A0A40CC005D7CA3 /* Location.swift */,
 				AF96BA482A0A40DB005D7CA3 /* LocationStore .swift */,
 				AFA2B6502A0E57F300FA79C3 /* UserAuth.swift */,
+				AFD9FD2F2A126875008FCEDF /* LocationFilters.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -198,6 +203,7 @@
 				AF96BA4E2A0A410D005D7CA3 /* SearchSuggestionsView .swift */,
 				AFA2B6492A0D1F4700FA79C3 /* LoginView.swift */,
 				AFD9FD2B2A124DB0008FCEDF /* MenuView.swift */,
+				AFD9FD2D2A1253F0008FCEDF /* FilterView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -359,6 +365,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFD9FD2E2A1253F0008FCEDF /* FilterView.swift in Sources */,
 				AFA2B6482A0CD41400FA79C3 /* SearchCompleterViewModel.swift in Sources */,
 				AF96BA4B2A0A40EE005D7CA3 /* ContentView.swift in Sources */,
 				AF209FED29EE907C00B59F66 /* Persistence.swift in Sources */,
@@ -368,6 +375,7 @@
 				AFA2B6512A0E57F300FA79C3 /* UserAuth.swift in Sources */,
 				AFD9FD2C2A124DB0008FCEDF /* MenuView.swift in Sources */,
 				AF96BA492A0A40DB005D7CA3 /* LocationStore .swift in Sources */,
+				AFD9FD302A126875008FCEDF /* LocationFilters.swift in Sources */,
 				AF96BA472A0A40CC005D7CA3 /* Location.swift in Sources */,
 				AFA2B64A2A0D1F4700FA79C3 /* LoginView.swift in Sources */,
 				AF209FF029EE907C00B59F66 /* WhereWasIt.xcdatamodeld in Sources */,

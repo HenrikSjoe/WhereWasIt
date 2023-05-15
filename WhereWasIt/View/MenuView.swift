@@ -10,20 +10,21 @@ import SwiftUI
 struct MenuView: View {
     @EnvironmentObject var userAuth: UserAuth
     @Binding var showingDetail: Bool
-
+    @Binding var showingFilter: Bool
+    
     var body: some View {
         HStack {
             Spacer()
             if userAuth.isSignedIn {
                 Menu {
                     Button("About", action: {
-                        // Handle About action
+                        
                     })
                     Button("Feedback/Support", action: {
-                        // Handle Feedback/Support action
+                        
                     })
                     Button("Filter Locations", action: {
-                        // Handle Filter Locations action
+                        showingFilter = true
                     })
                     Button("Add Location", action: {
                         self.showingDetail = true
@@ -38,13 +39,13 @@ struct MenuView: View {
             } else {
                 Menu {
                     Button("About", action: {
-                        // Handle About action
+                        
                     })
                     Button("Filter Locations", action: {
-                        // Handle Filter Locations action
+                        showingFilter = true
                     })
                     Button("Sign In", action: {
-                        // Handle Sign In action
+                        
                     })
                 } label: {
                     Image(systemName: "ellipsis.circle")
