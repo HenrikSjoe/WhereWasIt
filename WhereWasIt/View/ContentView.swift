@@ -9,7 +9,7 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @EnvironmentObject var locationStore: LocationStore
+        @EnvironmentObject var locationStore: LocationStore
         @State private var newLocationName: String = ""
         @State private var newLocationCategory: String = "Restaurant"
         @State private var newLocationAddress: String = ""
@@ -20,6 +20,8 @@ struct ContentView: View {
         @State private var lastSeen: Date = Date()
         @StateObject private var searchCompleter = SearchCompleterViewModel()
         @EnvironmentObject var userAuth: UserAuth
+        @State private var isPrivate: Bool = false
+    
 
         let categories = ["Restaurant", "Bar", "Nightclub", "Store", "Other"]
         
@@ -36,6 +38,9 @@ struct ContentView: View {
                 Form {
                                             Section(header: Text("Location Details")) {
                                                 TextField("Name", text: $newLocationName)
+                                                Toggle(isOn: $isPrivate) {
+                                                        Text("Private Location")
+                                                    }
                                                 Picker("Category", selection: $newLocationCategory) {
                                                     ForEach(categories, id: \.self) {
                                                         Text($0)
@@ -67,17 +72,33 @@ struct ContentView: View {
                                             Section {
                                                 Button(action: {
                                                     if let coordinate = self.newLocationCoordinate {
-                                                        locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                        locationStore.addLocation(
+                                                            name: self.newLocationName,
+                                                            category: self.newLocationCategory,
+                                                            coordinate: coordinate,
+                                                            firstSeen: self.firstSeen,
+                                                            lastSeen: self.lastSeen,
+                                                            isPrivate: self.isPrivate
+                                                        )
+
                                                         self.newLocationName = ""
                                                         self.newLocationCategory = "Restaurant"
                                                     } else {
                                                         geocode(address: self.newLocationAddress) { coordinate in
                                                             if let coordinate = coordinate {
-                                                                locationStore.addLocation(name: self.newLocationName, category: self.newLocationCategory, coordinate: coordinate, firstSeen: self.firstSeen, lastSeen: self.lastSeen)
+                                                                locationStore.addLocation(
+                                                                    name: self.newLocationName,
+                                                                    category: self.newLocationCategory,
+                                                                    coordinate: coordinate,
+                                                                    firstSeen: self.firstSeen,
+                                                                    lastSeen: self.lastSeen,
+                                                                    isPrivate: self.isPrivate
+                                                                )
                                                                 self.newLocationName = ""
                                                                 self.newLocationCategory = "Restaurant"
                                                             }
                                                         }
+
                                                     }
                                                     self.newLocationAddress = ""
                                                     self.searchCompleter.searchResults.removeAll()
@@ -132,8 +153,6 @@ struct ContentView: View {
     }
 
            
-
-                                        
     func geocode(address: String, completion: @escaping (CLLocationCoordinate2D?) -> Void) {
         geocoder.geocodeAddressString(address) { placemarks, error in
             guard let placemark = placemarks?.first, let location = placemark.location else {
@@ -145,13 +164,3 @@ struct ContentView: View {
         }
     }
 }
-
-
-                                    
-
-                                    //struct ContentView_Previews: PreviewProvider {
-                                    //    static var previews: some View {
-                                    //        ContentView()
-                                    //    }
-                                    //}
-

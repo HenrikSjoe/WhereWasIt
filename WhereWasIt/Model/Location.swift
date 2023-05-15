@@ -15,23 +15,29 @@ struct Location: Identifiable, Codable {
     let coordinate: CLLocationCoordinate2D
     let firstSeen: Date
     let lastSeen: Date
+    let isPrivate: Bool
+    let userId: String // userId of the user who created the location
 
-    init(id: String = UUID().uuidString, name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date) {
+    init(id: String = UUID().uuidString, name: String, category: String, coordinate: CLLocationCoordinate2D, firstSeen: Date, lastSeen: Date, isPrivate: Bool, userId: String) {
         self.id = id
         self.name = name
         self.category = category
         self.coordinate = coordinate
         self.firstSeen = firstSeen
         self.lastSeen = lastSeen
+        self.isPrivate = isPrivate
+        self.userId = userId
     }
 }
+
 
 extension Location {
     static func example() -> Location {
         let exampleDate = Date()
-        return Location(name: "Example Place", category: "Restaurant", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), firstSeen: exampleDate, lastSeen: exampleDate)
+        return Location(name: "Example Place", category: "Restaurant", coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), firstSeen: exampleDate, lastSeen: exampleDate, isPrivate: true, userId: "exampleUserId")
     }
 }
+
 
 extension CLLocationCoordinate2D: Codable {
     enum CodingKeys: CodingKey {

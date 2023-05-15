@@ -8,33 +8,10 @@
 import Firebase
 import Combine
 
-/* class UserAuth: ObservableObject {
-    @Published var user: User?
-    @Published var isSignedIn = false
-    private var handle: AuthStateDidChangeListenerHandle?
-
-    init() {
-        handle = Auth.auth().addStateDidChangeListener { (auth, user) in
-            if let user = user {
-                // User is signed in
-                self.user = user
-            } else {
-                // User is signed out
-                self.user = nil
-            }
-        }
-    }
-
-    deinit {
-        if let handle = handle {
-            Auth.auth().removeStateDidChangeListener(handle)
-        }
-    }
-}
-*/
 class UserAuth: ObservableObject {
-    private(set) var user: User?
+    @Published private(set) var user: User?
     @Published var isSignedIn: Bool = false
+    @Published var userId: String = "" // add this line
 
     func signIn(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
@@ -44,8 +21,19 @@ class UserAuth: ObservableObject {
                 print("Successfully signed in!")
                 self.user = authResult?.user
                 self.isSignedIn = true
+                self.userId = authResult?.user.uid ?? "" // add this line
             }
         }
     }
-}
 
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+            self.isSignedIn = false
+            self.user = nil
+            self.userId = "" // add this line
+        } catch {
+            print("Error signing out: \(error)")
+        }
+    }
+}

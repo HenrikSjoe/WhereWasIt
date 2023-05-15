@@ -48,9 +48,13 @@ class LocationViewModel: ObservableObject {
                     category: mapItem.pointOfInterestCategory?.rawValue ?? "",
                     coordinate: mapItem.placemark.coordinate,
                     firstSeen: placeholderDate,
-                    lastSeen: placeholderDate
+                    lastSeen: placeholderDate,
+                    isPrivate: false ,// and this line
+                    userId: "" // add this line
+                    
                 )
             }
+
         }
     }
 }

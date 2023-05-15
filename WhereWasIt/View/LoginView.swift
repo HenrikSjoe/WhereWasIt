@@ -9,7 +9,6 @@ import SwiftUI
 import FirebaseAuth
 
 struct NavigationHandler: ViewModifier {
-
     @Binding var value: Bool
     let destination: () -> AnyView
 
@@ -35,9 +34,9 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var errorMessage: String = ""
     @State private var showSignUp: Bool = false
-    @State private var signedIn: Bool = false
     @State private var browseTheMap: Bool = false
     @EnvironmentObject var userAuth: UserAuth
+    @EnvironmentObject var locationStore: LocationStore
 
     var body: some View {
         NavigationView {
@@ -56,11 +55,11 @@ struct LoginView: View {
                         SignUpView().environmentObject(userAuth)
                     }
                     Button(action: { self.browseTheMap = true }) {
-                                    Text("I just want to browse the map")
-                                }
-                                .fullScreenCover(isPresented: $browseTheMap, content: {
-                                    ContentView().environmentObject(userAuth).environmentObject(LocationStore())
-                                })
+                        Text("I just want to browse the map")
+                    }
+                    .fullScreenCover(isPresented: $browseTheMap, content: {
+                        ContentView().environmentObject(userAuth).environmentObject(locationStore)
+                    })
 
                     Button(action: { self.showSignUp = true }) {
                         Text("Sign Up")
@@ -70,37 +69,15 @@ struct LoginView: View {
                 Text(errorMessage)
                     .foregroundColor(.red)
             }
-            .navigate(using: $userAuth.isSignedIn, destination: { AnyView(ContentView().environmentObject(userAuth).environmentObject(LocationStore())) })
+            .navigate(using: $userAuth.isSignedIn, destination: {
+                AnyView(ContentView().environmentObject(userAuth).environmentObject(locationStore))
+            })
         }
     }
 
-   /* private func signIn() {
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            if let error = error {
-                print("Error signing in: \(error)")
-                errorMessage = error.localizedDescription
-                userAuth.isSignedIn = false
-            } else {
-                print("Successfully signed in!")
-                errorMessage = ""
-                userAuth.isSignedIn = true
-            }
-        }
-    }
-*/
     private func signIn() {
-        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            if let error = error {
-                print("Error signing in: \(error)")
-                errorMessage = error.localizedDescription
-            } else {
-                print("Successfully signed in!")
-                errorMessage = ""
-                userAuth.isSignedIn = true  // Update signedIn state in UserAuth
-            }
-        }
+        userAuth.signIn(email: email, password: password)
     }
-
 }
 
 struct SignUpView: View {
@@ -127,7 +104,7 @@ struct SignUpView: View {
                 .foregroundColor(.red)
         }
     }
-
+    
     private func signUp() {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
@@ -136,11 +113,11 @@ struct SignUpView: View {
             } else {
                 print("Successfully signed up!")
                 errorMessage = ""
-                // Update signedIn state in UserAuth
                 userAuth.isSignedIn = true
+                userAuth.userId = authResult?.user.uid ?? "" // directly assign the userId
             }
         }
     }
 
-}
 
+}
