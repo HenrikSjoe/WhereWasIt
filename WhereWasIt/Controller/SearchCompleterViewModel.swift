@@ -28,6 +28,5 @@ class SearchCompleterViewModel: NSObject, ObservableObject, MKLocalSearchComplet
     }
     
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        // handle error
     }
 }

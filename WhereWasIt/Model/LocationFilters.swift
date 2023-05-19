@@ -7,26 +7,10 @@
 
 import SwiftUI
 
-/*struct LocationFilters {
-    var category: String = ""
-    var applyCategoryFilter: Bool = false
-    var startDate: Date = Date.distantPast
-    var endDate: Date = Date.distantFuture
-    var applyDateFilter: Bool = false
-    var isPrivate: Bool = false
-    var applyPrivacyFilter: Bool = false
-    var name: String = ""
-    var applyFilter: Bool = false
-}
-*/
-
 struct LocationFilters {
-    var category: String = "All"
-    var applyCategoryFilter: Bool { category != "All" }
-    
-    var startDate: Date = Date.distantPast
-    var endDate: Date = Date.distantFuture
-    var applyDateFilter: Bool { startDate != Date.distantPast || endDate != Date.distantFuture }
+    var startDate: Date = Date()
+    var endDate: Date = Date()
+    var applyDateFilter: Bool { startDate < endDate }
     
     var isPrivate: Bool = false
     var applyPrivacyFilter: Bool { isPrivate != false }
@@ -37,3 +21,13 @@ struct LocationFilters {
     var applyFilter: Bool = false
 }
 
+enum LocationCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case restaurant = "Restaurant"
+    case bar = "Bar"
+    case nightClub = "Nightclub"
+    case store = "Store"
+    case other = "Other"
+    
+    var id: String { self.rawValue }
+}

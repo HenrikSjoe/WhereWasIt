@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct FilterView: View {
-    @EnvironmentObject var locationStore: LocationStore
     @Binding var filters: LocationFilters
+    @Binding var selectedCategory: LocationCategory
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Category")) {
-                    Picker("Category", selection: $filters.category) {
-                        ForEach(locationStore.categories, id: \.self) {
-                            Text($0)
+                    Picker("Category", selection: $selectedCategory) {
+                        ForEach(LocationCategory.allCases, id: \.self) { category in
+                            Text(category.rawValue)
                         }
                     }
                     .labelsHidden()
@@ -46,7 +46,6 @@ struct FilterView: View {
                     Text("Clear")
                 }),
                 trailing: Button(action: {
-                    print("Current filters: \(filters)")
                     filters.applyFilter = true
                     presentationMode.wrappedValue.dismiss()
                 }, label: {
