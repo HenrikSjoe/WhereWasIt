@@ -1,25 +1,25 @@
 //
-//  MapView.swift .swift
+//  MapViewRepresentable.swift .swift
 //  WhereWasIt
 //
 //  Created by Henrik Sjögren on 2023-05-09.
 //
 
-
+import Firebase
 import SwiftUI
 import MapKit
 import CoreLocation
 
-struct MapView: UIViewRepresentable {
-    @EnvironmentObject var locationStore: LocationStore
-    @EnvironmentObject var userAuth: UserAuth
+struct MapViewRepresentable: UIViewRepresentable {
     @Binding var centerOnUser: Bool
-    @Binding var filters: LocationFilters
-    var onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil
     
     @State private var userLocation: CLLocation?
     @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
     @State private var annotations: [LocationAnnotation] = []
+    
+    let locations: [Location]
+    let user: User?
+    var onLongPress: ((CLLocationCoordinate2D) -> Void)? = nil
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
@@ -41,19 +41,12 @@ struct MapView: UIViewRepresentable {
     
     private func updateAnnotations(from mapView: MKMapView) {
         mapView.removeAnnotations(mapView.annotations)
-        let locations = filters.applyFilter ? locationStore.filterLocations(filters: filters) : locationStore.locations
-        print("Locations after applying filter: \(locations)")
         let annotations = locations.map(LocationAnnotation.init)
         mapView.addAnnotations(annotations)
     }
     
-    
-    
-    
-    
-    
     func makeCoordinator() -> Coordinator {
-        Coordinator(self, locationStore: locationStore)
+        Coordinator(self)
     }
     
     
@@ -71,13 +64,12 @@ struct MapView: UIViewRepresentable {
     
     
     class Coordinator: NSObject, MKMapViewDelegate, CLLocationManagerDelegate {
-        var parent: MapView
-        var locationStore: LocationStore
+        var parent: MapViewRepresentable
         let locationManager = CLLocationManager()
         
-        init(_ parent: MapView, locationStore: LocationStore) {
+        init(_ parent: MapViewRepresentable
+        ) {
             self.parent = parent
-            self.locationStore = locationStore
             super.init()
             locationManager.delegate = self
             locationManager.requestWhenInUseAuthorization()
@@ -129,7 +121,7 @@ struct MapView: UIViewRepresentable {
         }
         
         @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-            if !parent.userAuth.isSignedIn {
+            if parent.user == nil {
                 return
             }
             
@@ -140,7 +132,6 @@ struct MapView: UIViewRepresentable {
                 parent.onLongPress?(coordinate)
             }
         }
-        
     }
 }
 
